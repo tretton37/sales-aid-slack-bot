@@ -11,3 +11,5 @@ JsonLink: https://jsonlink.io/
 **CINODE_ACCESS_ID**: Create an Cinode API key under *My  Account*, Access Id \
 **CINODE_ACCESS_SECRET**: Create an API key under *My  Account*, Access Secret \
 **JSONLINK_API_KEY**: Create a free account at JsonLink and get the API key from https://jsonlink.io/dashboard
+
+Don't forget to install the app on slack and invite the bot to the channel you want it to listen to.
