@@ -22,7 +22,7 @@ Sales Aid Slack Bot is a Slack bot designed to assist with sales tasks. It lever
 
 ## Installation
 
-2. Install the dependencies:
+1. Install the dependencies:
    ```sh
    npm install
    ```
