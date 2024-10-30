@@ -37,12 +37,12 @@ Sales Aid Slack Bot is a Slack bot designed to assist with sales tasks. It lever
 
 2. Fill in the environment variables in the `.env` file:
    ```env
-   **SLACK_APP_TOKEN**: Under *Basic Information*, Create an App level token with the connections:write scope  \
-   **SLACK_BOT_TOKEN**: Under *Install App*, Bot User OAuth Token \
-   **SLACK_SIGNING_SECRET**: Under *Basic Information*, Client Secret \
-   **CINODE_ACCESS_ID**: Create an Cinode API key under *My  Account*, Access Id \
-   **CINODE_ACCESS_SECRET**: Create an API key under *My  Account*, Access Secret \
-   **JSONLINK_API_KEY**: Create a free account at JsonLink and get the API key from https://jsonlink.io/dashboard
+   SLACK_APP_TOKEN: Under *Basic Information*, Create an App level token with the connections:write scope  \
+   SLACK_BOT_TOKEN: Under *Install App*, Bot User OAuth Token \
+   SLACK_SIGNING_SECRET: Under *Basic Information*, Client Secret \
+   CINODE_ACCESS_ID: Create an Cinode API key under *My  Account*, Access Id \
+   CINODE_ACCESS_SECRET: Create an API key under *My  Account*, Access Secret \
+   JSONLINK_API_KEY: Create a free account at JsonLink and get the API key from https://jsonlink.io/dashboard
    ```
 
 ## Usage
