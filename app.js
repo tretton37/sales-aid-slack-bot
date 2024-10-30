@@ -1,4 +1,5 @@
 const { App } = require('@slack/bolt');
+const { create } = require('domain');
 
 const app = new App({
     token: process.env.SLACK_BOT_TOKEN,
@@ -52,19 +53,26 @@ app.message('New Cinode Market Announcement', async ({message, say}) => {
 
     // Extract meta tags
     const apiUrl = `https://jsonlink.io/api/extract?url=${link}&api_key=${process.env.JSONLINK_API_KEY}`;
-    const response = await fetch(apiUrl);
+    let response;
+    try {
+        response = await fetch(apiUrl);
+    } catch(error) {
+        console.log(`Error getting metadata: ${error}`);
+        return;
+    }
 
     if(!response.ok) {
         console.log(`Error: ${response.status} - ${response.statusText}`)
+        await say("Could not create a project. :( Check logs.")
         return;
     }
 
     const data = await response.json();
-    console.log(data);
+    console.log(`JsonLink data: ${data}`);
 
 
     const accessBase64 = Buffer.from(`${process.env.CINODE_ACCESS_ID}:${process.env.CINODE_ACCESS_SECRET}`).toString('base64');
-    console.log(accessBase64);
+    console.log(`accessBase64: ${accessBase64}`);
 
     // Get token to post a new project
     const tokenReq = await fetch("https://api.cinode.com/token", {
@@ -76,7 +84,7 @@ app.message('New Cinode Market Announcement', async ({message, say}) => {
     });
 
     const token = await tokenReq.json();
-    console.log(token);
+    console.log(`Cinode token: ${token}`);
     const req = {
         "customerId": 158342, // SalesAid Tretton37
         "title": data.title,
@@ -102,8 +110,8 @@ app.message('New Cinode Market Announcement', async ({message, say}) => {
         body: JSON.stringify(req)
     });
     var project = await createProjectResponse.json();
-    console.log(project);
-    await say("Successfully created project");
+    console.log(`Cinode project response: ${project}`);
+    await say(createProjectResponse.ok ? "Successfully created project" : "Failed to create project");
 });
 
 (async () => {
