@@ -1,5 +1,7 @@
 # Sales Aid Slack Bot
 
+Sales Aid Slack Bot is a Slack bot designed to assist with sales tasks. It leverages the Slack API and other services to provide useful functionalities.
+
 ## Table of Contents
 
 - [Initialization](#initialization)
