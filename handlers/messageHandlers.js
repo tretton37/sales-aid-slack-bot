@@ -3,7 +3,7 @@ import { extractLinkFromMessage, fetchAndParseDates } from '../utils/utils.js';
 import { getCinodeToken, createCinodeProject } from '../utils/cinodeApi.js';
 import { formatCinodeAnnouncementMessage } from '../utils/messageFormatter.js';
 import { greetings, responses } from '../utils/greetings.js';
-import { text } from 'express';
+import { beautifyResponse } from '../utils/responseFormatter.js';
 
 const getRandomItem = (array) => array[Math.floor(Math.random() * array.length)];
 
@@ -23,18 +23,7 @@ export const handleGreetingMessage = async ({ event, say }) => {
   if (isGreetingMessage(messageText)) {
     const response = generateResponse(event.user);
     try {
-      await say({
-        text: getRandomItem(responses),
-        blocks: [
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: response,
-            },
-          },
-        ],
-      });
+      await say(beautifyResponse(response, responses));
     } catch (error) {
       console.error(error);
     }
