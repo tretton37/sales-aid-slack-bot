@@ -2,6 +2,7 @@ const { App } = require("@slack/bolt");
 const urlMetaData = require("url-metadata");
 
 
+require("dotenv").config();
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -12,7 +13,7 @@ const app = new App({
 });
 
 /* Add functionality here */
-app.message("hello", async ({ message, say }) => {
+app.message("Aloha", async ({ message, say }) => {
   console.log(message);
   await say(`Hey there, <@${message.user}>!`);
 });
