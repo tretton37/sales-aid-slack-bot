@@ -45,7 +45,7 @@ app.action("button_click", async ({ body, ack, say }) => {
   await ack();
 });
 
-app.message('New Cinode Market Announcement', async ({message, say}) => {
+app.message("New Cinode Market Announcement", async ({message, say}) => {
     console.log(message);
     let regexExtractLink = /<([^|]+)\|/;
     let link = message.text.match(regexExtractLink)[1];
@@ -53,16 +53,6 @@ app.message('New Cinode Market Announcement', async ({message, say}) => {
     if(!link) {
         console.log("Could not extract link");
     }
-    let data;
-    // try {
-
-    //     data = fetchMeta(link);
-    // } catch (error) {
-    //     console.log(`Error getting metadata: ${error}`);
-    //     await say("Could not create a project. :( Check logs.")
-    //     return;
-    // }
-    // console.log(`metadata: ${data}`);
 
     let metadata;
     try {
@@ -90,16 +80,16 @@ app.message('New Cinode Market Announcement', async ({message, say}) => {
     console.log(`Metadata title: ${metadata.title}`)
     console.log(`Metadata description: ${metadata.description}`)
     const req = {
-        "customerId": 158342, // SalesAid Tretton37
-        "title": metadata.title,
-        "description": metadata.description,
-        "pipelineId": 3020, // Sales Aid - Broker ads
-        "pipelineStageId": 14458, // Incoming
-        "currencyId": 1, // SEK
-        "projectState": 0, // ?
-        "stateReasonId": null, // ?
-        "priority": 5, // Medium
-        "salesManagerIds": [
+        customerId: 158342, // SalesAid Tretton37
+        title: metadata.title,
+        description: metadata.description,
+        pipelineId: 3020, // Sales Aid - Broker ads
+        pipelineStageId: 14458, // Incoming
+        currencyId: 1, // SEK
+        projectState: 0, // ?
+        stateReasonId: null, // ?
+        priority: 5, // Medium
+        salesManagerIds: [
           228236 // SalesAid Tretton37 user
         ]
       };
