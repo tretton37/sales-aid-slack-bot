@@ -1,48 +1,48 @@
-const { App } = require('@slack/bolt');
-const urlMetaData = require('url-metadata');
+const { App } = require("@slack/bolt");
+const urlMetaData = require("url-metadata");
 
 
 
 const app = new App({
-    token: process.env.SLACK_BOT_TOKEN,
-    signingSecret: process.env.SLACK_SIGNING_SECRET,
-    socketMode: true, 
-    appToken: process.env.SLACK_APP_TOKEN,
-    port: process.env.PORT || 3000 // Currently not used as in socket mode.
-  });
+  token: process.env.SLACK_BOT_TOKEN,
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  socketMode: true,
+  appToken: process.env.SLACK_APP_TOKEN,
+  port: process.env.PORT || 3000, // Currently not used as in socket mode.
+});
 
 /* Add functionality here */
-app.message('hello', async ({message, say}) => {
-    console.log(message);
-    await say(`Hey there, <@${message.user}>!`);
+app.message("hello", async ({ message, say }) => {
+  console.log(message);
+  await say(`Hey there, <@${message.user}>!`);
 });
 
-app.message('interact', async ({message, say}) => {
-    await say({
-        blocks: [
-            {
-                "type": "actions",
-                "block_id": "actions1",
-                "elements": [ 
-                    {
-                        "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "Click Me!"
-                        },
-                        "action_id": "button_click"
-                    }
-                ]
-            }
+app.message("interact", async ({ message, say }) => {
+  await say({
+    blocks: [
+      {
+        type: "actions",
+        block_id: "actions1",
+        elements: [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "Click Me!",
+            },
+            action_id: "button_click",
+          },
         ],
-        text: `Hey there <@${message.user}>!`
-    });
+      },
+    ],
+    text: `Hey there <@${message.user}>!`,
+  });
 });
 
-app.action('button_click', async ({body, ack, say}) => {
-    await say(`<@${body.user.id}> clicked the button.`);
-    
-    await ack();
+app.action("button_click", async ({ body, ack, say }) => {
+  await say(`<@${body.user.id}> clicked the button.`);
+
+  await ack();
 });
 
 app.message('New Cinode Market Announcement', async ({message, say}) => {
@@ -75,14 +75,14 @@ app.message('New Cinode Market Announcement', async ({message, say}) => {
     const accessBase64 = Buffer.from(`${process.env.CINODE_ACCESS_ID}:${process.env.CINODE_ACCESS_SECRET}`).toString('base64');
     console.log(`accessBase64: ${accessBase64}`);
 
-    // Get token to post a new project
-    const tokenReq = await fetch("https://api.cinode.com/token", {
-        method: "GET",
-        headers: {
-            'Accept': 'application/json',
-            'Authorization': `Basic ${accessBase64}`
-        }
-    });
+  // Get token to post a new project
+  const tokenReq = await fetch("https://api.cinode.com/token", {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Basic ${accessBase64}`,
+    },
+  });
 
     const token = await tokenReq.json();
 
@@ -126,8 +126,8 @@ app.message('New Cinode Market Announcement', async ({message, say}) => {
 });
 
 (async () => {
-    // Start the app
-    await app.start(process.env.PORT || 3000);
-    console.log('⚡️ Bolt app is running!');
+  // Start the app
+  await app.start(process.env.PORT || 3000);
+  console.log("⚡️ Bolt app is running!");
 })();
 
