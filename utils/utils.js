@@ -12,7 +12,8 @@ export const fetchAndParseDates = async (link) => {
   let startDate, endDate;
   const html = await fetch(link).then((resp) => resp.text());
   const $ = cheerio.load(html);
-  const date = $('app-icon').eq(2).parent().text();
+  const date = $('.feather-calendar').parent().parent().text();
+  console.log(date);
   [startDate, endDate] = date.split(' to ').map((date) => new Date(date.trim()).toLocaleDateString());
   return { startDate, endDate };
 };

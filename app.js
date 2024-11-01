@@ -4,13 +4,8 @@ import { handleGreetingMessage, handleNewCinodeMarketAnnouncement } from './hand
 dotenv.config();
 const { App, SocketModeReceiver } = pkg;
 
-const socketModeReceiver = new SocketModeReceiver({
-  appToken: process.env.SLACK_APP_TOKEN,
-  scopes: ['channels:read', 'chat:write', 'app_mentions:read'],
-});
-
 const app = new App({
-  receiver: socketModeReceiver,
+  appToken: process.env.SLACK_APP_TOKEN,
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   socketMode: true,
@@ -25,6 +20,5 @@ const app = new App({
 
 // Register message handlers
 
-// app.message(handleGreetingMessage);
 app.event('app_mention', handleGreetingMessage);
 app.message('New Cinode Market Announcement', handleNewCinodeMarketAnnouncement);
