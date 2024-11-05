@@ -1,6 +1,6 @@
 import urlMetaData from 'url-metadata';
 import { extractLinkFromMessage, fetchAndParseDates } from '../utils/utils.js';
-import { getCinodeToken, createCinodeProject } from '../utils/cinodeApi.js';
+import { getCinodeToken, createCinodeProject, createCinodeRole } from '../utils/cinodeApi.js';
 import { formatCinodeAnnouncementMessage } from '../utils/messageFormatter.js';
 import { greetings, responses } from '../utils/greetings.js';
 import { beautifyResponse } from '../utils/responseFormatter.js';
@@ -48,8 +48,11 @@ export const handleNewCinodeMarketAnnouncement = async ({ message, say }) => {
     metadata = await urlMetaData(link);
   } catch (error) {
     await say('Failed to fetch metadata from the link.');
-    console.log(error);
+    console.error(error);
   }
+
+  metadata.startDate = startDate;
+  metadata.endDate = endDate;
 
   await say(formatCinodeAnnouncementMessage(metadata, startDate, endDate));
 
@@ -57,27 +60,26 @@ export const handleNewCinodeMarketAnnouncement = async ({ message, say }) => {
 
   const token = await getCinodeToken(accessBase64);
 
-  const req = {
-    customerId: 158342, // SalesAid Tretton37
-    title: metadata.title,
-    description: metadata.description,
-    pipelineId: 3020, // Sales Aid - Broker ads
-    pipelineStageId: 14458, // Incoming
-    currencyId: 1, // SEK
-    projectState: 0, // ?
-    stateReasonId: null, // ?
-    priority: 5, // Medium
-    salesManagerIds: [
-      228236, // SalesAid Tretton37 user
-    ],
-  };
+  
 
-  const project = await createCinodeProject(token, req);
+  const project = await createCinodeProject(token, metadata);
+  
   if (project) {
-    console.log(`Cinode project response: ${project}`);
-    await say('Successfully created project');
+    console.log(`Cinode project response: ${JSON.stringify(project)}`);
   } else {
-    console.error(`Failed to create project: createCinodeProject returned ${project}`);
+    console.error(`Failed to create project: createCinodeProject returned ${JSON.stringify(project)}`);
     await say('Failed to create project. Please check your permissions and try again.');
   }
+
+  const role = await createCinodeRole(token, metadata, project.id);
+
+  if (role) {
+    console.log(`Cinode role response: ${JSON.stringify(role)}`);
+  } else {
+    console.error(`Failed to create project: createCinodeProject returned ${JSON.stringify(role)}`);
+    await say('Failed to create role. Please check your permissions and try again.');
+    return;
+  }
+
+  await say('Successfully created project');
 };
