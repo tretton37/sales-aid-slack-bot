@@ -1,5 +1,5 @@
 import urlMetaData from 'url-metadata';
-import { SlackContext, Metadata } from '../types/types.js';
+import type { SlackContext, Metadata } from '../types/types.js';
 import { getCinodeToken, createCinodeProject, createCinodeRole } from '../utils/cinodeApi.js';
 import { greetings, responses } from '../utils/greetings.js';
 import { formatCinodeAnnouncementMessage } from '../utils/messageFormatter.js';

@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import { DateRange } from '../types/types.js';
+import type { DateRange } from '../types/types.js';
 
 export const extractLinkFromMessage = (messageText: string): string | null => {
   const regexExtractLink = /<([^|]+)\|/;
