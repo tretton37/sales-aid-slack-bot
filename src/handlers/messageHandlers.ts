@@ -65,8 +65,8 @@ export const handleNewCinodeMarketAnnouncement = async ({ message, say }: SlackC
     const token = await getCinodeToken(accessBase64);
     const project = await createCinodeProject(token, enrichedMetadata);
 
-    if (!project) {
-      throw new Error('Failed to create Cinode project');
+    if ('error' in project) {
+      throw new Error(project.error);
     }
 
     const role = await createCinodeRole(token, enrichedMetadata, project.id);
@@ -78,6 +78,6 @@ export const handleNewCinodeMarketAnnouncement = async ({ message, say }: SlackC
   } catch (error) {
     console.error('Error processing announcement:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    await say(`An error occurred while processing the announcement: ${errorMessage}`);
+    await say(`An error occurred while creating project: ${errorMessage}`);
   }
 };

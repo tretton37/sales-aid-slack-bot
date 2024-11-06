@@ -27,11 +27,13 @@ export interface CinodeProject {
   id: number;
   title: string;
   description: string;
+  error?: string;
 }
 
 export interface CinodeRole {
   id: number;
   title: string;
+  error?: string;
 }
 
 export interface DateRange {

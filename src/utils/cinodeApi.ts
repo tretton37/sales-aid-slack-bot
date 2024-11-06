@@ -34,7 +34,7 @@ export const getCinodeToken = async (accessBase64: string): Promise<string> => {
   }
 };
 
-export const createCinodeProject = async (token: string, metadata: Metadata): Promise<CinodeProject | null> => {
+export const createCinodeProject = async (token: string, metadata: Metadata): Promise<CinodeProject> => {
   const req: CreateProjectRequest = {
     customerId: ProjectDefaults.CUSTOMER_ID,
     title: metadata.title,
@@ -58,18 +58,15 @@ export const createCinodeProject = async (token: string, metadata: Metadata): Pr
   });
 
   if (!createProjectResponse.ok) {
-    console.error(`Error creating project: ${createProjectResponse.status} - ${createProjectResponse.statusText}`);
-    return null;
+    return {
+      error: `${createProjectResponse.status} - ${createProjectResponse.statusText}`,
+    } as CinodeProject;
   }
 
   return (await createProjectResponse.json()) as CinodeProject;
 };
 
-export const createCinodeRole = async (
-  token: string,
-  metadata: Metadata,
-  projectId: number
-): Promise<CinodeRole | null> => {
+export const createCinodeRole = async (token: string, metadata: Metadata, projectId: number): Promise<CinodeRole> => {
   const req: CreateRoleRequest = {
     title: metadata.title,
     description: metadata.description,
@@ -94,8 +91,9 @@ export const createCinodeRole = async (
   );
 
   if (!response.ok) {
-    console.error(`Error creating role: ${response.status} - ${response.statusText}`);
-    return null;
+    return {
+      error: `${response.status} - ${response.statusText}`,
+    } as CinodeRole;
   }
 
   return (await response.json()) as CinodeRole;
