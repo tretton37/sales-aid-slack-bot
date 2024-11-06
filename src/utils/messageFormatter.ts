@@ -1,4 +1,4 @@
-import { Metadata, SlackMessage } from '../types/types.js';
+import type { Metadata, SlackMessage } from '../types/types.js';
 
 export const formatCinodeAnnouncementMessage = (
   metadata: Metadata,

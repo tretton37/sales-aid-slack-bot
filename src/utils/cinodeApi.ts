@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
-import {
+import { CINODE_API, ProjectDefaults, Priority } from './constants.js';
+import type {
   CinodeTokenResponse,
   Metadata,
   CinodeProject,
@@ -9,42 +10,48 @@ import {
 } from '../types/types.js';
 
 export const getCinodeToken = async (accessBase64: string): Promise<string> => {
-  const tokenReq = await fetch('https://api.cinode.com/token', {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Basic ${accessBase64}`,
-    },
-  });
-
-  if (!tokenReq.ok) {
-    throw new Error(`Failed to create a token: ${tokenReq.status} - ${tokenReq.statusText}`);
+  if (!accessBase64) {
+    throw new Error('Access credentials are required');
   }
 
-  const token = (await tokenReq.json()) as CinodeTokenResponse;
-  return token.access_token;
+  try {
+    const response = await fetch(CINODE_API.TOKEN_URL, {
+      method: 'GET',
+      headers: {
+        ...CINODE_API.HEADERS,
+        Authorization: `Basic ${accessBase64}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create token: ${response.status} - ${response.statusText}`);
+    }
+
+    const { access_token } = (await response.json()) as CinodeTokenResponse;
+    return access_token;
+  } catch (error) {
+    throw new Error(`Token request failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 };
 
 export const createCinodeProject = async (token: string, metadata: Metadata): Promise<CinodeProject | null> => {
   const req: CreateProjectRequest = {
-    customerId: 158342, // SalesAid Tretton37
+    customerId: ProjectDefaults.CUSTOMER_ID,
     title: metadata.title,
     description: metadata.description,
-    pipelineId: 3020, // Sales Aid - Broker ads
-    pipelineStageId: 14458, // Incoming
-    currencyId: 1, // SEK
+    pipelineId: ProjectDefaults.PIPELINE_ID,
+    pipelineStageId: ProjectDefaults.PIPELINE_STAGE_ID,
+    currencyId: ProjectDefaults.CURRENCY_ID,
     projectState: 0,
     stateReasonId: null,
-    priority: 5, // Medium
-    salesManagerIds: [
-      228236, // SalesAid Tretton37 user
-    ],
+    priority: Priority.MEDIUM,
+    salesManagerIds: [ProjectDefaults.SALES_MANAGER_ID],
   };
 
-  const createProjectResponse = await fetch('https://api.cinode.com/v0.1/companies/175/projects', {
+  const createProjectResponse = await fetch(`${CINODE_API.BASE_URL}/v0.1/companies/${CINODE_API.COMPANY_ID}/projects`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      ...CINODE_API.HEADERS,
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(req),
@@ -70,18 +77,21 @@ export const createCinodeRole = async (
     endDate: metadata.endDate,
     contractType: 0,
     extentType: 0,
-    currencyId: 1,
+    currencyId: ProjectDefaults.CURRENCY_ID,
     disableSkillsGeneration: false,
   };
 
-  const response = await fetch(`https://api.cinode.com/v0.1/companies/175/projects/${projectId}/roles`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(req),
-  });
+  const response = await fetch(
+    `${CINODE_API.BASE_URL}/v0.1/companies/${CINODE_API.COMPANY_ID}/projects/${projectId}/roles`,
+    {
+      method: 'POST',
+      headers: {
+        ...CINODE_API.HEADERS,
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(req),
+    }
+  );
 
   if (!response.ok) {
     console.error(`Error creating role: ${response.status} - ${response.statusText}`);
