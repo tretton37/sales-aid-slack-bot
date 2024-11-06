@@ -1,19 +1,16 @@
 import * as cheerio from 'cheerio';
+import { DateRange } from '../types/types.js';
 
-// Function to extract link from message text
-export const extractLinkFromMessage = (messageText) => {
+export const extractLinkFromMessage = (messageText: string): string | null => {
   const regexExtractLink = /<([^|]+)\|/;
   const match = messageText.match(regexExtractLink);
   return match ? match[1] : null;
 };
 
-// Function to fetch and parse HTML for dates
-export const fetchAndParseDates = async (link) => {
-  let startDate, endDate;
+export const fetchAndParseDates = async (link: string): Promise<DateRange> => {
   const html = await fetch(link).then((resp) => resp.text());
   const $ = cheerio.load(html);
   const date = $('.feather-calendar').parent().parent().text();
-  console.log(date);
-  [startDate, endDate] = date.split(' to ').map((date) => new Date(date.trim()).toLocaleDateString());
+  const [startDate, endDate] = date.split(' to ').map((date) => new Date(date.trim()).toLocaleDateString());
   return { startDate, endDate };
 };

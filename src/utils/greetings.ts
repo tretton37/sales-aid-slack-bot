@@ -1,4 +1,4 @@
-export const greetings = [
+export const greetings: string[] = [
   'hello',
   'hi',
   'hey',
@@ -29,7 +29,7 @@ export const greetings = [
   'wsup',
 ];
 
-export const responses = [
+export const responses: string[] = [
   `Did you know I'm powered by coffee?`,
   `How can I assist you today? Or should I say, how can I bot-sist you?`,
   `What's up? Besides the sky, of course.`,

@@ -20,4 +20,4 @@ const app = new App({
 
 // Register message handlers
 app.event('app_mention', handleGreetingMessage);
-app.message('New Cinode Market Announcement', handleNewCinodeMarketAnnouncement);
+app.message('From', handleNewCinodeMarketAnnouncement);

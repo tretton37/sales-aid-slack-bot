@@ -11,11 +11,20 @@
     "node-html-parser": "^6.1.13",
     "url-metadata": "^4.1.1"
   },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.19",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
   "name": "sales-aid-slack-bot",
   "version": "1.0.0",
   "description": "sales aid slack bot",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "dev": "ts-node --esm src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
