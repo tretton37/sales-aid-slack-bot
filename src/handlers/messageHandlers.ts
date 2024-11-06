@@ -47,14 +47,14 @@ export const handleNewCinodeMarketAnnouncement = async ({ message, say }: SlackC
 
   try {
     const options = {
-      descriptionLength: 4000
+      descriptionLength: 4000,
     };
     // Fetch dates and metadata in parallel
     const [{ startDate, endDate }, metadata] = await Promise.all([
       fetchAndParseDates(link),
       urlMetaData(link, options) as Promise<Metadata>,
     ]);
-    
+
     const enrichedMetadata = { ...metadata, startDate, endDate };
     await say(formatCinodeAnnouncementMessage(enrichedMetadata, startDate, endDate));
 

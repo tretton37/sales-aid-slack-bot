@@ -11,7 +11,7 @@ export const formatCinodeAnnouncementMessage = (
       type: 'header',
       text: {
         type: 'plain_text',
-        text: '🔥New Project🔥',
+        text: '❗New Project❗',
         emoji: true,
       },
     },
