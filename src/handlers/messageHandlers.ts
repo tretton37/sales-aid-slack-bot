@@ -1,5 +1,4 @@
-import urlMetaData from 'url-metadata';
-import type { SlackContext, Metadata } from '../types/types.js';
+import type { SlackContext } from '../types/types.js';
 import { getCinodeToken, createCinodeProject, createCinodeRole } from '../utils/cinodeApi.js';
 import { greetings, responses } from '../utils/greetings.js';
 import { formatCinodeAnnouncementMessage } from '../utils/messageFormatter.js';
@@ -51,7 +50,7 @@ export const handleNewCinodeMarketAnnouncement = async ({ message, say }: SlackC
     };
 
     const metadata = await urlMetadataExtractor(link, options, 5);
-    const {startDate, endDate} = await fetchAndParseDates(link);
+    const { startDate, endDate } = await fetchAndParseDates(link);
 
     const enrichedMetadata = { ...metadata, startDate, endDate };
     await say(formatCinodeAnnouncementMessage(enrichedMetadata, startDate, endDate));
