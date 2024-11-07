@@ -68,7 +68,7 @@ export interface CreateProjectRequest {
   projectState: number;
   stateReasonId: null;
   priority: number;
-  salesManagerIds: number[];
+  salesManagerId: number;
 }
 
 export interface CreateRoleRequest {

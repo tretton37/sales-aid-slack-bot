@@ -45,7 +45,7 @@ export const createCinodeProject = async (token: string, metadata: Metadata): Pr
     projectState: 0,
     stateReasonId: null,
     priority: Priority.MEDIUM,
-    salesManagerIds: [ProjectDefaults.SALES_MANAGER_ID],
+    salesManagerId: ProjectDefaults.SALES_MANAGER_ID,
   };
 
   const createProjectResponse = await fetch(`${CINODE_API.BASE_URL}/v0.1/companies/${CINODE_API.COMPANY_ID}/projects`, {
