@@ -22,6 +22,8 @@ Sales Aid Slack Bot is a Slack bot designed to assist with sales tasks. It lever
 
 #### Enable or disable Socket Mode depending on how the bot is running.
 
+Enable events under 'Event Subscriptions' in Slack app admin.
+
 ## Installation
 
 1. Install the dependencies:
