@@ -1,44 +1,35 @@
-export interface SlackMessage {
-  text: string;
-  blocks: Array<{
-    type: string;
-    text?: {
-      type: string;
-      text: string;
-      emoji?: boolean;
-    };
-    fields?: Array<{
-      type: string;
-      text: string;
-    }>;
-  }>;
-}
-
-export interface Metadata {
-  'og:title'?: string;
-  title: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  url?: string;
-}
-
-export interface CinodeProject {
-  id: number;
-  title: string;
-  description: string;
-  error?: string;
-}
-
-export interface CinodeRole {
-  id: number;
-  title: string;
-  error?: string;
-}
-
+// Common interfaces
 export interface DateRange {
   startDate: string;
   endDate: string;
+}
+
+export interface Metadata extends DateRange {
+  'og:title'?: string;
+  title: string;
+  description: string;
+  url?: string;
+}
+
+// Slack-related interfaces
+export interface SlackTextBlock {
+  type: string;
+  text: string;
+}
+
+export interface SlackBlock {
+  type: string;
+  text?: {
+    type: string;
+    text: string;
+    emoji?: boolean;
+  };
+  fields?: Array<SlackTextBlock>;
+}
+
+export interface SlackMessage {
+  text: string;
+  blocks: Array<SlackBlock>;
 }
 
 export interface SlackContext {
@@ -52,12 +43,24 @@ export interface SlackContext {
   say: (message: SlackMessage | string) => Promise<void>;
 }
 
-export interface CinodeTokenResponse {
-  access_token: string;
-  expires_in: number;
-  token_type: string;
+// Cinode-related interfaces
+interface CinodeBase {
+  id: number;
+  title: string;
+  error?: string;
 }
 
+export interface CinodeProject extends CinodeBase {
+  description: string;
+}
+
+export interface CinodeRole extends CinodeBase {}
+
+export interface CinodeTokenResponse {
+  access_token: string;
+}
+
+// Request interfaces
 export interface CreateProjectRequest {
   customerId: number;
   title: string;
@@ -71,11 +74,9 @@ export interface CreateProjectRequest {
   salesManagerId: number;
 }
 
-export interface CreateRoleRequest {
+export interface CreateRoleRequest extends DateRange {
   title: string;
   description: string;
-  startDate: string;
-  endDate: string;
   contractType: number;
   extentType: number;
   currencyId: number;
