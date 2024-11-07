@@ -4,7 +4,7 @@ import { getCinodeToken, createCinodeProject, createCinodeRole } from '../utils/
 import { greetings, responses } from '../utils/greetings.js';
 import { formatCinodeAnnouncementMessage } from '../utils/messageFormatter.js';
 import { beautifyResponse } from '../utils/responseFormatter.js';
-import { extractLinkFromMessage, fetchAndParseDates } from '../utils/utils.js';
+import { extractLinkFromMessage, fetchAndParseDates, urlMetadataExtractor } from '../utils/utils.js';
 
 const getRandomItem = <T>(array: T[]): T => array[Math.floor(Math.random() * array.length)];
 
@@ -49,11 +49,9 @@ export const handleNewCinodeMarketAnnouncement = async ({ message, say }: SlackC
     const options = {
       descriptionLength: 4000,
     };
-    // Fetch dates and metadata in parallel
-    const [{ startDate, endDate }, metadata] = await Promise.all([
-      fetchAndParseDates(link),
-      urlMetaData(link, options) as Promise<Metadata>,
-    ]);
+
+    const metadata = await urlMetadataExtractor(link, options, 5);
+    const {startDate, endDate} = await fetchAndParseDates(link);
 
     const enrichedMetadata = { ...metadata, startDate, endDate };
     await say(formatCinodeAnnouncementMessage(enrichedMetadata, startDate, endDate));

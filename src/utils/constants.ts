@@ -21,3 +21,7 @@ export enum Priority {
   MEDIUM = 5,
   HIGH = 10,
 }
+
+export enum Defaults {
+  RETRY_DURATION = 60000
+}
