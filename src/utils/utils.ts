@@ -1,9 +1,8 @@
 import * as cheerio from 'cheerio';
 import type { DateRange, Metadata } from '../types/types.js';
 import urlMetadata from 'url-metadata';
-import { Defaults } from '../utils/constants.js'
+import { Defaults } from '../utils/constants.js';
 import { Error } from '@slack/web-api/dist/types/response/AdminWorkflowsCollaboratorsRemoveResponse.js';
-
 
 export const extractLinkFromMessage = (messageText: string): string | null => {
   const regexExtractLink = /<([^|]+)\|/;
@@ -19,7 +18,11 @@ export const fetchAndParseDates = async (link: string): Promise<DateRange> => {
   return { startDate, endDate };
 };
 
-export const urlMetadataExtractor = async (link: string, options: urlMetadata.Options, retries = 5): Promise<Metadata> => {
+export const urlMetadataExtractor = async (
+  link: string,
+  options: urlMetadata.Options,
+  retries = 5
+): Promise<Metadata> => {
   let err: Error[] = [];
   for (let i = 1; i <= retries; i++) {
     try {
@@ -34,12 +37,14 @@ export const urlMetadataExtractor = async (link: string, options: urlMetadata.Op
       err.push(error as Error);
       await sleep(Defaults.RETRY_DURATION);
       continue;
-    }    
+    }
   }
 
-  throw new Error(`Could not retrieve link(${link}) after ${retries} retries. Error: ${err.map(e => e.message).join(', ')}`);
-}
+  throw new Error(
+    `Could not retrieve link(${link}) after ${retries} retries. Error: ${err.map((e) => e.message).join(', ')}`
+  );
+};
 
 const sleep = async (ms: number) => {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
