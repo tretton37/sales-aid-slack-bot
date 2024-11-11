@@ -5,6 +5,8 @@ import { formatCinodeAnnouncementMessage } from '../utils/messageFormatter.js';
 import { beautifyResponse } from '../utils/responseFormatter.js';
 import { extractLinkFromMessage, fetchAndParseDates, urlMetadataExtractor } from '../utils/utils.js';
 import { Defaults } from '../utils/constants.js';
+import { CinodeError, ApiError } from '../utils/errors.js';
+import logger from '../utils/logger.js';
 
 const getRandomItem = <T>(array: T[]): T => array[Math.floor(Math.random() * array.length)];
 
@@ -32,25 +34,21 @@ export const handleGreetingMessage = async ({ event, say }: SlackContext): Promi
 };
 
 export const handleNewCinodeMarketAnnouncement = async ({ message, say }: SlackContext): Promise<void> => {
-  if (!message?.text) {
-    console.error('No message or message text provided');
-    await say('Invalid message format received.');
-    return;
-  }
-
-  const link = extractLinkFromMessage(message.text);
-  if (!link) {
-    console.log('Could not extract link from message');
-    await say('Could not extract link from message. Please ensure the message contains a valid URL.');
-    return;
-  }
-
   try {
+    if (!message?.text) {
+      throw new Error('No message or message text provided');
+    }
+
+    const link = extractLinkFromMessage(message.text);
+    if (!link) {
+      throw new Error('Could not extract link from message');
+    }
+
     const options = {
       descriptionLength: Defaults.DESCRIPTION_LENGTH,
     };
 
-    const metadata = await urlMetadataExtractor(link, options, 5);
+    const metadata = await urlMetadataExtractor(link, options);
     const { startDate, endDate } = await fetchAndParseDates(link);
 
     const enrichedMetadata = { ...metadata, startDate, endDate };
@@ -74,8 +72,15 @@ export const handleNewCinodeMarketAnnouncement = async ({ message, say }: SlackC
 
     await say('Successfully created project and role in Cinode');
   } catch (error) {
-    console.error('Error processing announcement:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    await say(`An error occurred while creating project: ${errorMessage}`);
+    logger.error('Error processing announcement:', error);
+
+    if (error instanceof CinodeError) {
+      await say(`Cinode API Error: ${errorMessage}`);
+    } else if (error instanceof ApiError) {
+      await say(`API Error: ${errorMessage}`);
+    } else {
+      await say(`An error occurred: ${errorMessage}`);
+    }
   }
 };

@@ -1,5 +1,8 @@
 import fetch from 'node-fetch';
 import { CINODE_API, ProjectDefaults, Priority } from './constants.js';
+import { withRetry } from './retry.js';
+import { CinodeError } from './errors.js';
+import logger from './logger.js';
 import type {
   CinodeTokenResponse,
   Metadata,
@@ -11,27 +14,30 @@ import type {
 
 export const getCinodeToken = async (accessBase64: string): Promise<string> => {
   if (!accessBase64) {
-    throw new Error('Access credentials are required');
+    throw new CinodeError('Access credentials are required');
   }
 
-  try {
-    const response = await fetch(CINODE_API.TOKEN_URL, {
-      method: 'GET',
-      headers: {
-        ...CINODE_API.HEADERS,
-        Authorization: `Basic ${accessBase64}`,
-      },
-    });
+  return withRetry(async () => {
+    try {
+      const response = await fetch(CINODE_API.TOKEN_URL, {
+        method: 'GET',
+        headers: {
+          ...CINODE_API.HEADERS,
+          Authorization: `Basic ${accessBase64}`,
+        },
+      });
 
-    if (!response.ok) {
-      throw new Error(`Failed to create token: ${response.status} - ${response.statusText}`);
+      if (!response.ok) {
+        throw new CinodeError(`Failed to create token: ${response.status}`, response.status);
+      }
+
+      const { access_token } = (await response.json()) as CinodeTokenResponse;
+      return access_token;
+    } catch (error) {
+      logger.error('Token request failed', error);
+      throw error;
     }
-
-    const { access_token } = (await response.json()) as CinodeTokenResponse;
-    return access_token;
-  } catch (error) {
-    throw new Error(`Token request failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  }
+  });
 };
 
 export const createCinodeProject = async (token: string, metadata: Metadata): Promise<CinodeProject> => {
@@ -48,22 +54,33 @@ export const createCinodeProject = async (token: string, metadata: Metadata): Pr
     salesManagerId: ProjectDefaults.SALES_MANAGER_ID,
   };
 
-  const createProjectResponse = await fetch(`${CINODE_API.BASE_URL}/v0.1/companies/${CINODE_API.COMPANY_ID}/projects`, {
-    method: 'POST',
-    headers: {
-      ...CINODE_API.HEADERS,
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(req),
+  return withRetry(async () => {
+    try {
+      const createProjectResponse = await fetch(
+        `${CINODE_API.BASE_URL}/v0.1/companies/${CINODE_API.COMPANY_ID}/projects`,
+        {
+          method: 'POST',
+          headers: {
+            ...CINODE_API.HEADERS,
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(req),
+        }
+      );
+
+      if (!createProjectResponse.ok) {
+        throw new CinodeError(
+          `Failed to create project: ${createProjectResponse.status}`,
+          createProjectResponse.status
+        );
+      }
+
+      return (await createProjectResponse.json()) as CinodeProject;
+    } catch (error) {
+      logger.error('Create project request failed', error);
+      throw error;
+    }
   });
-
-  if (!createProjectResponse.ok) {
-    return {
-      error: `${createProjectResponse.status} - ${createProjectResponse.statusText}`,
-    } as CinodeProject;
-  }
-
-  return (await createProjectResponse.json()) as CinodeProject;
 };
 
 export const createCinodeRole = async (token: string, metadata: Metadata, projectId: number): Promise<CinodeRole> => {
@@ -78,23 +95,28 @@ export const createCinodeRole = async (token: string, metadata: Metadata, projec
     disableSkillsGeneration: false,
   };
 
-  const response = await fetch(
-    `${CINODE_API.BASE_URL}/v0.1/companies/${CINODE_API.COMPANY_ID}/projects/${projectId}/roles`,
-    {
-      method: 'POST',
-      headers: {
-        ...CINODE_API.HEADERS,
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(req),
+  return withRetry(async () => {
+    try {
+      const response = await fetch(
+        `${CINODE_API.BASE_URL}/v0.1/companies/${CINODE_API.COMPANY_ID}/projects/${projectId}/roles`,
+        {
+          method: 'POST',
+          headers: {
+            ...CINODE_API.HEADERS,
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(req),
+        }
+      );
+
+      if (!response.ok) {
+        throw new CinodeError(`Failed to create role: ${response.status}`, response.status);
+      }
+
+      return (await response.json()) as CinodeRole;
+    } catch (error) {
+      logger.error('Create role request failed', error);
+      throw error;
     }
-  );
-
-  if (!response.ok) {
-    return {
-      error: `${response.status} - ${response.statusText}`,
-    } as CinodeRole;
-  }
-
-  return (await response.json()) as CinodeRole;
+  });
 };
