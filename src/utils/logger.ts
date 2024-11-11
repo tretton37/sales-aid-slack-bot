@@ -2,7 +2,7 @@ type LogLevel = 'info' | 'error' | 'warn' | 'debug';
 
 const logger = {
   log: (level: LogLevel, message: string, meta?: unknown) => {
-    const timestamp = new Date().toLocaleDateString();
+    const timestamp = new Date().toLocaleString();
     console[level](`[${timestamp}] ${message}`, meta || '');
   },
   error: (message: string, meta?: unknown) => logger.log('error', message, meta),
