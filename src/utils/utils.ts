@@ -1,8 +1,8 @@
 import * as cheerio from 'cheerio';
 import type { DateRange, Metadata } from '../types/types.js';
 import urlMetadata from 'url-metadata';
-import { Defaults } from '../utils/constants.js';
-import { Error } from '@slack/web-api/dist/types/response/AdminWorkflowsCollaboratorsRemoveResponse.js';
+import { withRetry } from './retry.js';
+import { ApiError } from './errors.js';
 
 export const extractLinkFromMessage = (messageText: string): string | null => {
   const regexExtractLink = /<([^|]+)\|/;
@@ -18,32 +18,12 @@ export const fetchAndParseDates = async (link: string): Promise<DateRange> => {
   return { startDate, endDate };
 };
 
-export const urlMetadataExtractor = async (
-  link: string,
-  options: urlMetadata.Options,
-  retries = 5
-): Promise<Metadata> => {
-  for (let attempt = 1; attempt <= retries; attempt++) {
+export const urlMetadataExtractor = async (link: string, options: urlMetadata.Options): Promise<Metadata> => {
+  return withRetry(async () => {
     try {
       return (await urlMetadata(link, options)) as Metadata;
     } catch (error) {
-      console.error(`urlMetadataExtractor attempt ${attempt}/${retries} failed`);
-      console.error(`link: ${link}`);
-      console.error(`error: ${(error as Error).message}`);
-
-      if (attempt === retries) {
-        throw new Error(
-          `Failed to retrieve metadata for ${link} after ${retries} attempts: ${(error as Error).message}`
-        );
-      }
-
-      console.error(`Waiting ${Defaults.RETRY_DURATION}ms before next attempt`);
-      await new Promise((resolve) => {
-        const timeout = setTimeout(resolve, Defaults.RETRY_DURATION);
-        // Clean up timeout to prevent memory leaks
-        timeout.unref?.();
-      });
+      throw new ApiError(`Failed to retrieve metadata: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-  }
-  throw new Error(`Failed to retrieve metadata for ${link}`);
+  });
 };
