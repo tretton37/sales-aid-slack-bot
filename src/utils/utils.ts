@@ -23,28 +23,27 @@ export const urlMetadataExtractor = async (
   options: urlMetadata.Options,
   retries = 5
 ): Promise<Metadata> => {
-  let err: Error[] = [];
-  for (let i = 1; i <= retries; i++) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      const metadata = await urlMetadata(link, options);
-      return metadata as Metadata;
+      return (await urlMetadata(link, options)) as Metadata;
     } catch (error) {
-      console.error(`urlMetadataExtractor try ${i}/${retries} failed`);
+      console.error(`urlMetadataExtractor attempt ${attempt}/${retries} failed`);
       console.error(`link: ${link}`);
       console.error(`error: ${(error as Error).message}`);
-      console.error(`retrying again in ${Defaults.RETRY_DURATION} ms`);
 
-      err.push(error as Error);
-      await sleep(Defaults.RETRY_DURATION);
-      continue;
+      if (attempt === retries) {
+        throw new Error(
+          `Failed to retrieve metadata for ${link} after ${retries} attempts: ${(error as Error).message}`
+        );
+      }
+
+      console.error(`Waiting ${Defaults.RETRY_DURATION}ms before next attempt`);
+      await new Promise((resolve) => {
+        const timeout = setTimeout(resolve, Defaults.RETRY_DURATION);
+        // Clean up timeout to prevent memory leaks
+        timeout.unref?.();
+      });
     }
   }
-
-  throw new Error(
-    `Could not retrieve link(${link}) after ${retries} retries. Error: ${err.map((e) => e.message).join(', ')}`
-  );
-};
-
-const sleep = async (ms: number) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  throw new Error(`Failed to retrieve metadata for ${link}`);
 };
