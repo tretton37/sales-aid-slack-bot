@@ -13,9 +13,8 @@ Sales Aid Slack Bot is a Slack bot designed to assist with sales tasks. It lever
 
 ## Initialization
 
-Create an app at: https://api.slack.com/apps
+Create an app at: https://api.slack.com/apps \
 Create an API key: https://app.cinode.com/tretton37/account
-JsonLink: https://jsonlink.io/
 
 Don't forget to install the app on slack and invite the bot to the channel you want it to listen to.
 Sales Aid Slack Bot is a Slack bot designed to assist with sales tasks. It leverages the Slack API and other services to provide useful functionalities.
