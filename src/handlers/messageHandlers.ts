@@ -4,6 +4,7 @@ import { greetings, responses } from '../utils/greetings.js';
 import { formatCinodeAnnouncementMessage } from '../utils/messageFormatter.js';
 import { beautifyResponse } from '../utils/responseFormatter.js';
 import { extractLinkFromMessage, fetchAndParseDates, urlMetadataExtractor } from '../utils/utils.js';
+import { Defaults } from '../utils/constants.js';
 
 const getRandomItem = <T>(array: T[]): T => array[Math.floor(Math.random() * array.length)];
 
@@ -46,7 +47,7 @@ export const handleNewCinodeMarketAnnouncement = async ({ message, say }: SlackC
 
   try {
     const options = {
-      descriptionLength: 4000,
+      descriptionLength: Defaults.DESCRIPTION_LENGTH,
     };
 
     const metadata = await urlMetadataExtractor(link, options, 5);

@@ -24,4 +24,5 @@ export enum Priority {
 
 export enum Defaults {
   RETRY_DURATION = 6000,
+  DESCRIPTION_LENGTH = 4000,
 }
