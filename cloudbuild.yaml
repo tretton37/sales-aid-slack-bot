@@ -1,50 +1,29 @@
 steps:
   - name: 'gcr.io/cloud-builders/npm'
-    args:
-      - install
-      - --prefix=/usr/local
-    entrypoint: 'npm'
-    cmd: ['run', 'build']
-    timeout: '120s'
-
-  - name: 'gcr.io/cloud-builders/cloud-run'
-    args:
-      - build
-      - .
-      - --platform=managed
-      - --output=/tmp/output
-
+    args: ['install']
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['build']
+    - name: 'gcr.io/cloud-builders/npm'
+    args: ['run']  
+  
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['build']
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
-      - 'run'
-      - 'deploy'
-      - 'gc-slack-to-cinode'
-      - --image=$_BUILD_OUTPUT
-      - --platform=managed
-      - --region='north-europe1' # Replace with your desired region
+      [
+        'run',
+        'deploy',
+        'gc-slack-to-cinode-bot',
+        '--source',
+        '.',
+        '--region',
+        'europe-north1',
+        '--platform',
+        'managed',
+        '--allow-unauthenticated',
+        '--set-env-vars',
+        'PROJECT_ID=$PROJECT_ID',
+      ]
 
-images:
-  - '$_BUILD_OUTPUT' # Reference the output of the Cloud Run build step
-
-# steps:
-#   - name: 'gcr.io/cloud-builders/npm'
-#     args: ['install', 'typescript', '-g']
-#   - name: 'gcr.io/cloud-builders/gcloud'
-#     args:
-#       [
-#         'run',
-#         'deploy',
-#         'gc-slack-to-cinode-bot',
-#         '--source',
-#         '.',
-#         '--region',
-#         'europe-north1',
-#         '--platform',
-#         'managed',
-#         '--allow-unauthenticated',
-#         '--set-env-vars',
-#         'PROJECT_ID=$PROJECT_ID',
-#       ]
-
-# options:
-#   logging: CLOUD_LOGGING_ONLY
+options:
+  logging: CLOUD_LOGGING_ONLY
