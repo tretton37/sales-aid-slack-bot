@@ -7,7 +7,7 @@ import { extractLinkFromMessage, fetchAndParseDates, urlMetadataExtractor } from
 import { Defaults } from '../utils/constants.js';
 import { CinodeError, ApiError } from '../utils/errors.js';
 import logger from '../utils/logger.js';
-import { BotkitMessage, BotWorker } from 'botkit';
+import type { BotkitMessage, BotWorker } from 'botkit';
 
 const getRandomItem = <T>(array: T[]): T => array[Math.floor(Math.random() * array.length)];
 
