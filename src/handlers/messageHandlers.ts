@@ -7,6 +7,7 @@ import { extractLinkFromMessage, fetchAndParseDates, urlMetadataExtractor } from
 import { Defaults } from '../utils/constants.js';
 import { CinodeError, ApiError } from '../utils/errors.js';
 import logger from '../utils/logger.js';
+import { BotkitMessage, BotWorker } from 'botkit';
 
 const getRandomItem = <T>(array: T[]): T => array[Math.floor(Math.random() * array.length)];
 
@@ -85,7 +86,7 @@ export const handleNewCinodeMarketAnnouncement = async ({ message, say }: SlackC
   }
 };
 
-export const handleNewCinodeMarketAnnouncement2 = async ({ bot, message }: SlackContext): Promise<void> => {
+export const handleNewCinodeMarketAnnouncement2 = async (bot: BotWorker, message: BotkitMessage): Promise<void> => {
   try {
     if (!message?.text) {
       throw new Error('No message or message text provided');
