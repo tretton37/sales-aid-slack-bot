@@ -33,6 +33,7 @@ export interface SlackMessage {
 }
 
 export interface SlackContext {
+  bot: any;
   event: {
     text: string;
     user: string;
