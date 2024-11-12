@@ -12,7 +12,8 @@
     "node-fetch": "^3.3.2",
     "node-html-parser": "^6.1.13",
     "url-metadata": "^4.1.1",
-    "request": "^2"
+    "request": "^2",
+    "@google-cloud/secret-manager": "^4"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
