@@ -1,11 +1,11 @@
 import pkg from '@slack/bolt';
 import dotenv from 'dotenv';
 import { handleGreetingMessage, handleNewCinodeMarketAnnouncement, handleNewCinodeMarketAnnouncement2 } from './handlers/messageHandlers.js';
-dotenv.config();
-const { App } = pkg;
 import { Botkit } from 'botkit';
 import { SlackAdapter } from 'botbuilder-adapter-slack';
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
+dotenv.config();
+const { App } = pkg;
 
 
 /**
@@ -28,11 +28,11 @@ async function accessSecretVersion(name) {
 
 
 
-
 const adapter = new SlackAdapter({
   clientSigningSecret: await accessSecretVersion('client-signing-secret'),
   botToken: await accessSecretVersion('bot-token'),
 });
+
 
 
 const controller = new Botkit({
@@ -61,6 +61,6 @@ const controller = new Botkit({
 
 
 controller.ready(() => {
-  controller.hears('hello','message', ({bot, message}) => {bot.reply(message, 'hello');})
+  controller.hears('hello','message', async (bot, message) => { await bot.reply(message, 'hello');})
   controller.hears('From', 'message', handleNewCinodeMarketAnnouncement2)
 });
