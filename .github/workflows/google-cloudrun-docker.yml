@@ -33,6 +33,7 @@ on:
   push:
     branches:
       - '"master"'
+      - '"Google-Cloud"'
 
 env:
   PROJECT_ID: 'sales-aid' # TODO: update to your Google Cloud project ID
@@ -60,7 +61,7 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@f112390a2df9932162083945e46d439060d66ec2' # google-github-actions/auth@v2
         # with:
-          # workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
+        # workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
 
       # BEGIN - Docker auth and build
       #
@@ -78,7 +79,6 @@ jobs:
           docker build --tag "${DOCKER_TAG}" .
           docker push "${DOCKER_TAG}"
       - name: 'Deploy to Cloud Run'
-
         # END - Docker auth and build
 
         uses: 'google-github-actions/deploy-cloudrun@33553064113a37d688aa6937bacbdc481580be17' # google-github-actions/deploy-cloudrun@v2
