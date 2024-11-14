@@ -65,32 +65,44 @@ The bot is deployed to Google Cloud using the docker container.
 1. Make sure you have [Docker](https://www.docker.com/get-started/) installed.
 2. Install the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install).
 3. Create a Google Cloud project (either through portal or CLI)
-4. Log in to your google cloud via the CLI
+4. Add some environmental variables
+
+   ```bash
+   PROJECT_ID=$(gcloud config get-value core/project)
+   REGION="europe-north1" // Or whatever region you want
+   ```
+
+5. Log in to your google cloud via the CLI and make sure you have the correct services
+
    ```bash
    gcloud auth login
-   gcloud config set project [YOUR_PROJECT_ID]
+   gcloud config set project $PROJECT_ID
+   gcloud services enable artifactregistry.googleapis.com
+   gcloud services enable run.googleapis.com
    ```
-5. Athenticate docker to use your google auth
+
+6. Athenticate docker to use your google auth
    ```bash
    gcloud auth configure-docker
    ```
-6. Build the image.
+7. Build the image.
    ```bash
-   docker build -t gcr.io/[YOUR_PROJECT_ID]/slack-bolt-app .
+   docker build -t gcr.io/$PROJECT_ID/slack-bolt-app .
    ```
-7. Push the image to Google Container Registry
+8. Push the image to Google Container Registry
    ```bash
-   docker push gcr.io/[YOUR_PROJECT_ID]/slack-bolt-app
+   docker push gcr.io/$PROJECT_ID/slack-bolt-app
    ```
-8. Deploy the Google Run Function
+9. Deploy the Google Run Function
    ```bash
    gcloud run deploy slack-bolt-app \
-   --image gcr.io/[YOUR_PROJECT_ID]/slack-bolt-app \
+   --image gcr.io/$PROJECT_ID/slack-bolt-app \
    --platform managed \
-   --region [YOUR_REGION] \
+   --region $REGION \
    --allow-unauthenticated \
-   --set-env-vars PROJECT_ID = [YOUR_PROJECT_ID]
+   --set-env-vars PROJECT_ID=$PROJECT_ID
    ```
+10. See output for your google run URL. Go to api.slack.com and go to your app and go down to Event Subscription and paste in your new link and add /slack/events to the end as that is the endpoint that Bolt uses.
 
 ## Dependencies
 
