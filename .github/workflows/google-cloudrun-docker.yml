@@ -38,7 +38,7 @@ env:
   PROJECT_ID: 'sales-aid' # TODO: update to your Google Cloud project ID
   REGION: 'europe-north1' # TODO: update to your region
   SERVICE: 'slack-bolt-app' # TODO: update to your service name
-  # WORKLOAD_IDENTITY_PROVIDER: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider' # TODO: update to your workload identity provider
+  WORKLOAD_IDENTITY_PROVIDER: 'projects/278381352587/locations/global/workloadIdentityPools/github/providers/sales-aid-slack-bot' # TODO: update to your workload identity provider
 
 jobs:
   deploy:
@@ -59,8 +59,8 @@ jobs:
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@f112390a2df9932162083945e46d439060d66ec2' # google-github-actions/auth@v2
-        # with:
-        # workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
+        with:
+          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
 
       # BEGIN - Docker auth and build
       #
