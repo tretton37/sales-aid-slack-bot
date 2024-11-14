@@ -32,7 +32,7 @@ name: 'Build and Deploy to Cloud Run'
 on:
   push:
     branches:
-      - '"Google-Cloud"'
+      - 'Google-Cloud'
 
 env:
   PROJECT_ID: 'sales-aid' # TODO: update to your Google Cloud project ID
