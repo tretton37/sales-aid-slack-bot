@@ -39,10 +39,11 @@ export const handleNewCinodeMarketAnnouncement = async ({ message, say }: SlackC
       throw new Error('No message or message text provided');
     }
 
-    const link = extractLinkFromMessage(message.text);
-    if (!link) {
+    const links = extractLinkFromMessage(message.text, 'CINODE_MARKET');
+    if (!links) {
       throw new Error('Could not extract link from message');
     }
+    const link = links[0];
 
     const options = {
       descriptionLength: Defaults.DESCRIPTION_LENGTH,

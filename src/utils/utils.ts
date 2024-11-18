@@ -3,11 +3,13 @@ import type { DateRange, Metadata } from '../types/types.js';
 import urlMetadata from 'url-metadata';
 import { withRetry } from './retry.js';
 import { ApiError } from './errors.js';
+import { RegExps, RegExpKeys } from './constants.js';
 
-export const extractLinkFromMessage = (messageText: string): string | null => {
-  const regexExtractLink = /<([^|]+)\|/;
-  const match = messageText.match(regexExtractLink);
-  return match ? match[1] : null;
+export const extractLinkFromMessage = (messageText: string, regexKey: RegExpKeys): string[] | null => {
+  const regex = RegExps[regexKey];
+
+  const match = messageText.match(regex);
+  return match ? match : null;
 };
 
 export const fetchAndParseDates = async (link: string): Promise<DateRange> => {
