@@ -26,3 +26,10 @@ export enum Defaults {
   RETRY_DURATION = 60000,
   DESCRIPTION_LENGTH = 4000,
 }
+
+export const RegExps = {
+  CINODE_MARKET: /<([^|]+)\|/,
+  EMAGINE: /https:\/\/www.emagine-consulting\.se\/consultants\/freelance-jobs[^"]*/,
+} as const;
+
+export type RegExpKeys = keyof typeof RegExps;
